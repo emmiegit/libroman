@@ -31,11 +31,15 @@
 
 static long str2long(const char *str)
 {
+	int neg;
 	long sum;
 
 	sum = 0;
 	if (str[0] == '-') {
+		neg = 1;
 		str++;
+	} else {
+		neg = 0;
 	}
 	while (*str) {
 		if (!isdigit(*str)) {
@@ -45,7 +49,7 @@ static long str2long(const char *str)
 		sum += *str - '0';
 		str++;
 	}
-	return sum;
+	return (!neg) ? sum : -sum;
 }
 
 static void usage_and_exit(FILE *out, const char *argv0, int ret)
