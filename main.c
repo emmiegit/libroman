@@ -41,6 +41,7 @@ static long str2long(const char *str)
 		if (!isdigit(*str)) {
 			return -1;
 		}
+		sum *= 10;
 		sum += *str - '0';
 		str++;
 	}

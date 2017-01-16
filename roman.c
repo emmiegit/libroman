@@ -55,6 +55,39 @@ static short get_digit(char ch)
 	return -1;
 }
 
+static int is_nulla(const char *str)
+{
+	size_t i;
+	int equals;
+
+	/*
+	 * This function does a case-insensitive match for "nulla" or "nihil".
+	 *
+	 * Normally I'd just use strcasecmp(), but requiring POSIX 2001
+	 * compatibility for just one function is absurd.
+	 */
+
+	/* The 'n' has already been checked by romantolong(). */
+	equals = 1;
+	for (i = 0; i < 5; i++) {
+		if (tolower(str[i]) != "ulla"[i]) {
+			equals = 0;
+			break;
+		}
+	}
+	if (equals) {
+		return 1;
+	}
+	equals = 1;
+	for (i = 0; i < 5; i++) {
+		if (tolower(str[i]) != "ihil"[i]) {
+			equals = 0;
+			break;
+		}
+	}
+	return equals;
+}
+
 long romantolong(const char *str, size_t len)
 {
 	int neg;
@@ -74,11 +107,11 @@ long romantolong(const char *str, size_t len)
 	if (str[i] == '-') {
 		neg = 1;
 		i++;
-	} else if (str[i] == 'N') {
+	} else if (tolower(str[i]) == 'n') {
 		neg = 1;
 		i++;
-		if (i == len) {
-			/* Plain "N" means zero */
+		/* Check for zero */
+		if (i == len || is_nulla(str + i)) {
 			return 0;
 		}
 	} else {
@@ -154,7 +187,7 @@ int longtoroman(long num, char *buf, size_t len)
 		bytes = 0;
 	}
 
-	/* Iterate through the numerals, skipping the 5's (e.g. 50, 500) */
+	/* Only iterate over the 10* series, not the 5* numerals */
 	for (i = 0; i < ARRAY_SIZE(numerals); i += 2) {
 		const struct numeral_value *nv;
 		long digit;
@@ -174,15 +207,16 @@ int longtoroman(long num, char *buf, size_t len)
 		 *
 		 * For some digit n, the form is (n)(n + 1) for 4* and
 		 * (n)(n + 2) for 9*. This can be reduced to an algebraic expression
-		 * to calculate the offset from n, which is what "off" is.
+		 * to calculate the offset from n, which is what "off" is. It can only
+		 * be 1 or 2.
 		 *
 		 * For digits 5 or greater, the appropriate 5* value is printed,
 		 * and then the remaining (n)s are added.
 		 *
 		 * For digits less than 5, it's simply that number of (n)s.
 		 */
-		/* if (i != 0) */
-		if ((digit == 4 || digit == 9)) {
+
+		if ((i != 0) && (digit == 4 || digit == 9)) {
 			int off = (digit + 1) / 5;
 			if (bytes + 2 >= len) {
 				return -1;
@@ -190,7 +224,7 @@ int longtoroman(long num, char *buf, size_t len)
 			buf[bytes]     = nv->ch;
 			buf[bytes + 1] = (nv+off)->ch;
 			bytes += 2;
-		} else if (digit >= 5) {
+		} else if ((i != 0) && (digit >= 5)) {
 			if (bytes + (digit - 4) >= len) {
 				return -1;
 			}
