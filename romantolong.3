@@ -39,7 +39,7 @@ Roman numerals create value both additively and subtractively. When a lower-valu
 .P
 When a numeral appears after another numeral of equal or higher value, their combined values are simply added together. The numeral `XXI' would result in 21. Note that additive and subtractive operations can occur multiple times in the same numeral. `XIV` results in 14, as the `X' is added to the lower-valued `IV', which evaluates to 4.
 .P
-\fBlongtoroman\fP() takes in a \fBlong\fP integer value and attempts to fill the user-provided buffer \fIbuf\fP with the roman numeral version of this string. There are many possible roman numeral combinations that can result from any particular decimal number, so this implementation seeks to . 
+\fBlongtoroman\fP() takes in a \fBlong\fP integer value and attempts to fill the user-provided buffer \fIbuf\fP with the roman numeral version of this string. There are many possible roman numeral combinations that can result from any particular decimal number, so this implementation seeks to create it in the "typical" manner as follows. For each power of 10, the appropriate decimal digit is chosen. For that digit, the additive numeral form is outputted, except for 4 and 9. This means that the decimal digits 0 through 9 are written as: `I', `II', `III', `IV', `V', `VI', `VII', `VIII', and `IX'.
 .SS Negative numbers and zero
 A literal `N', `nulla', or `nihil' are accepted, as these were historically used by some scholars in place of zero.
 .P
