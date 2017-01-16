@@ -65,7 +65,7 @@ static void print_roman(long num, int *ret)
 	if (longtoroman(num, buf, sizeof(buf)) > 0) {
 		puts(buf);
 	} else {
-		puts("invalid");
+		puts("too long");
 		*ret = 1;
 	}
 }
