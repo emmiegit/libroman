@@ -1,0 +1,13 @@
+# Binaries
+*.d
+*.o
+*.a
+*.so
+*.dylib
+roman
+
+# Misc
+.*.swp
+*~
+*#
+

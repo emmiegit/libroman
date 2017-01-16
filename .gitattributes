@@ -1,0 +1,3 @@
+# To prevent GitHub from thinking I program in C++
+*.h linguist-language=C
+
