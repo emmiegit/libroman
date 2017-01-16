@@ -31,7 +31,19 @@ romantolong, longtoroman - convert roman numerals
 .BI "long romantolong(const char *" str ", size_t " len ");"
 .BI "int longtoroman(long " num ", char *" buf ", size_t " len ");"
 .SH DESCRIPTION
-.\" TODO
+\fBromantolong\fP() reads a null-terminated string and returns the equivalent \fBlong\fP integer value. It attempts to be very flexible in its input, ignoring leading or trailing whitespace (as determined by \fBisspace\fP(3)), ignoring case, and allowing for negative numbers and zero.
+.P
+`I', `V', `X', `L', `C', `D', and `M' are the accepted digits, with their decimal values as follows: 1, 5, 10, 50, 100, 500 and 1,000. `N' is also accepted, but has caveats. See below.
+.P
+Roman numerals create value both additively and subtractively. When a lower-valued numeral appears before a higher valued one, the total value of the preceding value is subtracted from the high value. This will happen as many times as needed. So `IVX' would be interpreted as 6, since `IV' is 4 (five minus one), and that is subtracted from ten.
+.P
+When a numeral appears after another numeral of equal or higher value, their combined values are simply added together. The numeral `XXI' would result in 21. Note that additive and subtractive operations can occur multiple times in the same numeral. `XIV` results in 14, as the `X' is added to the lower-valued `IV', which evaluates to 4.
+.P
+\fBlongtoroman\fP() takes in a \fBlong\fP integer value and attempts to fill the user-provided buffer \fIbuf\fP with the roman numeral version of this string. There are many possible roman numeral combinations that can result from any particular decimal number, so this implementation seeks to . 
+.SS Negative numbers and zero
+A literal `N', `nulla', or `nihil' are accepted, as these were historically used by some scholars in place of zero.
+.P
+If a numeral is prefixed with `\-' of `N', then it is taken to be a negative sign. The final roman numeral value will be negated. Any whitespace in between the negative sign and the rest of the digits is ignored, but any whitespace that separates numerals within the value will result in a parse error.
 .SH RETURN VALUE
 .P
 \fBromantolong\fP() returns the equivalent \fBlong\fP value of the roman numeral in the string, or -1 otherwise.
@@ -39,5 +51,11 @@ romantolong, longtoroman - convert roman numerals
 \fBlongtoroman\fP() returns the number of bytes written (not including the null terminator), or -1 if the buffer is too small. If -1 is returned, the contents of the buffer are undefined.
 .SH NOTES
 Since \fBromantolong\fP() can legitimately return -1, if the calling program accepts negative values, it should search the string for the `-' or `N` character and replace it with whitespace, negating the returned value if needed.
+.P
+If \fBlongtoroman\fP() ever returns a value that \fBromantolong\fP() cannot understand, please file an issue.
 .SH SEE ALSO
-\fBstrtol\fP(3)
+\fBstrtol\fP(3), \fBisspace\fP(3)
+.SH AUTHOR
+Ammon Smith (ammon.i.smith\fR@\fPgmail.com)
+.P
+\fIhttps://gitlab.com/ammongit/libroman\fP
