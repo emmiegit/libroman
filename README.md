@@ -9,7 +9,7 @@ $ make
 
 There should now be several binaries:
 * The static library `libroman.a`
-* The dynamic library `libroman.so` (or `.dylib` on Mac)
+* The dynamic library `libroman.so` (`.dylib` on Mac)
 * The sample executable `roman`
 
 ### Usage

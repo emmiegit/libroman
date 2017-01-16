@@ -29,10 +29,10 @@
 
 #define ARRAY_SIZE(x)	(sizeof(x) / sizeof((x)[0]))
 
-static const struct symbol_value {
+static const struct numeral_value {
 	char ch;
 	short value;
-} symbols[] = {
+} numerals[] = {
 	{ 'I', 1 },
 	{ 'V', 5 },
 	{ 'X', 10 },
@@ -47,9 +47,9 @@ static short get_digit(char ch)
 	size_t i;
 
 	ch = toupper(ch);
-	for (i = 0; i < ARRAY_SIZE(symbols); i++) {
-		if (symbols[i].ch == ch) {
-			return symbols[i].value;
+	for (i = 0; i < ARRAY_SIZE(numerals); i++) {
+		if (numerals[i].ch == ch) {
+			return numerals[i].value;
 		}
 	}
 	return -1;
@@ -154,14 +154,14 @@ int longtoroman(long num, char *buf, size_t len)
 		bytes = 0;
 	}
 
-	/* Iterate through the symbols, skipping the 5's (e.g. 50, 500) */
-	for (i = 0; i < ARRAY_SIZE(symbols); i += 2) {
-		const struct symbol_value *sv;
+	/* Iterate through the numerals, skipping the 5's (e.g. 50, 500) */
+	for (i = 0; i < ARRAY_SIZE(numerals); i += 2) {
+		const struct numeral_value *nv;
 		long digit;
 
-		sv = &symbols[ARRAY_SIZE(symbols) - i - 1];
-		digit = num / sv->value;
-		num = num % sv->value;
+		nv = &numerals[ARRAY_SIZE(numerals) - i - 1];
+		digit = num / nv->value;
+		num = num % nv->value;
 
 		/* Optimize by skipping zero */
 		if (digit == 0) {
@@ -176,21 +176,32 @@ int longtoroman(long num, char *buf, size_t len)
 		 * (n)(n + 2) for 9*. This can be reduced to an algebraic expression
 		 * to calculate the offset from n, which is what "off" is.
 		 *
-		 * For other digits, it's simply that number of (n)s.
+		 * For digits 5 or greater, the appropriate 5* value is printed,
+		 * and then the remaining (n)s are added.
+		 *
+		 * For digits less than 5, it's simply that number of (n)s.
 		 */
-		if ((i != 0) && (digit == 4 || digit == 9)) {
+		/* if (i != 0) */
+		if ((digit == 4 || digit == 9)) {
 			int off = (digit + 1) / 5;
 			if (bytes + 2 >= len) {
 				return -1;
 			}
-			buf[bytes]     = sv->ch;
-			buf[bytes + 1] = (sv+off)->ch;
+			buf[bytes]     = nv->ch;
+			buf[bytes + 1] = (nv+off)->ch;
 			bytes += 2;
+		} else if (digit >= 5) {
+			if (bytes + (digit - 4) >= len) {
+				return -1;
+			}
+			buf[bytes] = (nv+1)->ch;
+			memset(buf + bytes + 1, nv->ch, digit - 1);
+			bytes += (digit - 4);
 		} else {
 			if (bytes + digit >= len) {
 				return -1;
 			}
-			memset(buf + bytes, sv->ch, digit);
+			memset(buf + bytes, nv->ch, digit);
 			bytes += digit;
 		}
 
