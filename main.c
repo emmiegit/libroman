@@ -23,6 +23,7 @@
  */
 
 #include <ctype.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -62,11 +63,12 @@ static void print_roman(long num, int *ret)
 {
 	char buf[256];
 
-	if (longtoroman(num, buf, sizeof(buf)) > 0) {
-		puts(buf);
+	longtoroman(num, buf, sizeof(buf));
+	if (errno) {
+		puts("Result is too long.");
+		*ret = EXIT_FAILURE;
 	} else {
-		puts("too long");
-		*ret = 1;
+		puts(buf);
 	}
 }
 
@@ -75,11 +77,11 @@ static void print_numeral(const char *str, int *ret)
 	long num;
 
 	num = romantolong(str, strlen(str));
-	if (num != -1) {
-		printf("%ld\n", num);
+	if (errno) {
+		puts("Invalid input.");
+		*ret = EXIT_FAILURE;
 	} else {
-		puts("invalid");
-		*ret = 1;
+		printf("%ld\n", num);
 	}
 }
 

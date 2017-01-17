@@ -46,11 +46,17 @@ A literal `N', `nulla', or `nihil' are accepted, as these were historically used
 If a numeral is prefixed with `\-' of `N', then it is taken to be a negative sign. The final roman numeral value will be negated. Any whitespace in between the negative sign and the rest of the digits is ignored, but any whitespace that separates numerals within the value will result in a parse error.
 .SH RETURN VALUE
 .P
-\fBromantolong\fP() returns the equivalent \fBlong\fP value of the roman numeral in the string, or -1 otherwise.
+\fBromantolong\fP() returns the equivalent \fBlong\fP value of the roman numeral in the string. If the numeral cannot be parsed, -1 is returned and \fIerrno\fP is set appropriately.
 .P
-\fBlongtoroman\fP() returns the number of bytes written (not including the null terminator), or -1 if the buffer is too small. If -1 is returned, the contents of the buffer are undefined.
+\fBlongtoroman\fP() returns the number of bytes written (not including the null terminator). If the buffer is insufficient in size, -1 is returned and \fIerrno\fP is set appropriately. In such a case, the contents of \fIbuf\fP are undefined.
+.SH ERRORS
+.B EINVAL
+The specified string is not a roman numeral.
+.P
+.B ENOMEM
+The passed buffer is not large enough to store the result.
 .SH NOTES
-Since \fBromantolong\fP() can legitimately return -1, if the calling program accepts negative values, it should search the string for the `-' or `N` character and replace it with whitespace, negating the returned value if needed.
+Since \fBromantolong\fP() can legitimately return -1, if the calling program accepts negative values, it should check \fIerrno\fP before and after the call.
 .P
 If \fBlongtoroman\fP() ever returns a value that \fBromantolong\fP() cannot understand, please file an issue.
 .SH SEE ALSO

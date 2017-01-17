@@ -23,6 +23,7 @@
  */
 
 #include <ctype.h>
+#include <errno.h>
 #include <string.h>
 
 #include "roman.h"
@@ -98,6 +99,7 @@ long romantolong(const char *str, size_t len)
 	/* Ignore leading whitespace */
 	for (i = 0; isspace(str[i]); i++) {
 		if (i == len) {
+			errno = 0;
 			return 0;
 		}
 	}
@@ -112,6 +114,7 @@ long romantolong(const char *str, size_t len)
 		i++;
 		/* Check for zero */
 		if (i == len || is_nulla(str + i)) {
+			errno = 0;
 			return 0;
 		}
 	} else {
@@ -121,6 +124,7 @@ long romantolong(const char *str, size_t len)
 	/* Ignore middle whitespace */
 	for (; isspace(str[i]); i++) {
 		if (i == len) {
+			errno = EINVAL;
 			return -1;
 		}
 	}
@@ -128,6 +132,7 @@ long romantolong(const char *str, size_t len)
 	last = get_digit(str[i++]);
 	part = last;
 	if (last < 0) {
+		errno = EINVAL;
 		return -1;
 	}
 
@@ -139,6 +144,7 @@ long romantolong(const char *str, size_t len)
 
 		cur = get_digit(str[i]);
 		if (cur < 0) {
+			errno = EINVAL;
 			return -1;
 		}
 
@@ -157,6 +163,7 @@ long romantolong(const char *str, size_t len)
 	/* Ignore trailing whitespace */
 	for (; i < len; i++) {
 		if (!isspace(str[i])) {
+			errno = EINVAL;
 			return -1;
 		}
 	}
@@ -170,11 +177,13 @@ int longtoroman(long num, char *buf, size_t len)
 
 	/* Special cases */
 	if (len == 0) {
+		errno = ENOMEM;
 		return -1;
 	}
 	if (num == 0) {
 		buf[0] = 'N';
 		buf[1] = '\0';
+		errno = 0;
 		return 1;
 	}
 
@@ -219,6 +228,7 @@ int longtoroman(long num, char *buf, size_t len)
 		if ((i != 0) && (digit == 4 || digit == 9)) {
 			int off = (digit + 1) / 5;
 			if (bytes + 2 >= len) {
+				errno = ENOMEM;
 				return -1;
 			}
 			buf[bytes]     = nv->ch;
@@ -226,6 +236,7 @@ int longtoroman(long num, char *buf, size_t len)
 			bytes += 2;
 		} else if ((i != 0) && (digit >= 5)) {
 			if (bytes + (digit - 4) >= len) {
+				errno = ENOMEM;
 				return -1;
 			}
 			buf[bytes] = (nv+1)->ch;
@@ -233,6 +244,7 @@ int longtoroman(long num, char *buf, size_t len)
 			bytes += (digit - 4);
 		} else {
 			if (bytes + digit >= len) {
+				errno = ENOMEM;
 				return -1;
 			}
 			memset(buf + bytes, nv->ch, digit);
@@ -240,6 +252,7 @@ int longtoroman(long num, char *buf, size_t len)
 		}
 
 	}
+	errno = 0;
 	buf[bytes] = '\0';
 	return bytes;
 }
