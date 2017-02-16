@@ -89,7 +89,12 @@ static int is_nulla(const char *str)
 	return equals;
 }
 
-long romantolong(const char *str, size_t len)
+long romantolong(const char *str)
+{
+	return romantolongn(str, strlen(str));
+}
+
+long romantolongn(const char *str, size_t len)
 {
 	int neg;
 	long sum, part;
@@ -177,7 +182,7 @@ int longtoroman(long num, char *buf, size_t len)
 
 	/* Special cases */
 	if (len == 0) {
-		errno = ENOMEM;
+		errno = ENOBUFS;
 		return -1;
 	}
 	if (num == 0) {
@@ -228,7 +233,7 @@ int longtoroman(long num, char *buf, size_t len)
 		if ((i != 0) && (digit == 4 || digit == 9)) {
 			int off = (digit + 1) / 5;
 			if (bytes + 2 >= len) {
-				errno = ENOMEM;
+				errno = ENOBUFS;
 				return -1;
 			}
 			buf[bytes]     = nv->ch;
@@ -236,7 +241,7 @@ int longtoroman(long num, char *buf, size_t len)
 			bytes += 2;
 		} else if ((i != 0) && (digit >= 5)) {
 			if (bytes + (digit - 4) >= len) {
-				errno = ENOMEM;
+				errno = ENOBUFS;
 				return -1;
 			}
 			buf[bytes] = (nv+1)->ch;
@@ -244,7 +249,7 @@ int longtoroman(long num, char *buf, size_t len)
 			bytes += (digit - 4);
 		} else {
 			if (bytes + digit >= len) {
-				errno = ENOMEM;
+				errno = ENOBUFS;
 				return -1;
 			}
 			memset(buf + bytes, nv->ch, digit);

@@ -28,10 +28,11 @@ romantolong, longtoroman - convert roman numerals
 .nf
 .B #include <roman.h>
 .sp
-.BI "long romantolong(const char *" str ", size_t " len ");"
+.BI "long romantolong(const char *" str ");"
+.BI "long romantolongn(const char *" buf ", size_t " len ");"
 .BI "int longtoroman(long " num ", char *" buf ", size_t " len ");"
 .SH DESCRIPTION
-\fBromantolong\fP() reads a null-terminated string and returns the equivalent \fBlong\fP integer value. It attempts to be very flexible in its input, ignoring leading or trailing whitespace (as determined by \fBisspace\fP(3)), ignoring case, and allowing for negative numbers and zero.
+\fBromantolong\fP() reads a null-terminated string and returns the equivalent \fBlong\fP integer value. It attempts to be very flexible in its input, ignoring leading or trailing whitespace (as determined by \fBisspace\fP(3)), ignoring case, and allowing for negative numbers and zero. \fBromantolongn\fP() is the same, except a buffer and its length is passed instead.
 .P
 `I', `V', `X', `L', `C', `D', and `M' are the accepted digits, with their decimal values as follows: 1, 5, 10, 50, 100, 500 and 1,000. `N' is also accepted, but has caveats. See below.
 .P
@@ -51,10 +52,10 @@ If a numeral is prefixed with `\-' of `N', then it is taken to be a negative sig
 \fBlongtoroman\fP() returns the number of bytes written (not including the null terminator). If the buffer is insufficient in size, -1 is returned and \fIerrno\fP is set appropriately. In such a case, the contents of \fIbuf\fP are undefined.
 .SH ERRORS
 .B EINVAL
-The specified string is not a roman numeral.
+(for \fBromantolong\fP() and \fBromantolongn\fP()): The specified string is not a roman numeral.
 .P
-.B ENOMEM
-The passed buffer is not large enough to store the result.
+.B ENOBUFS
+(for \fBlongtoroman\fP()): The passed buffer is not large enough to store the result.
 .SH NOTES
 Since \fBromantolong\fP() can legitimately return -1, if the calling program accepts negative values, it should check \fIerrno\fP before and after the call.
 .P

@@ -28,7 +28,7 @@ ECHO_CC_0  = @echo '[CC]  $@'; $(CC)
 ECHO_CC_1  = $(CC)
 ECHO_CC    = $(ECHO_CC_$(V))
 
-ECHO_CC2_0 = @echo '[CC2] $@'; $(CC) -fpic
+ECHO_CC2_0 = @echo '[CC]  $@'; $(CC) -fpic
 ECHO_CC2_1 = $(CC) -fpic
 ECHO_CC2   = $(ECHO_CC2_$(V))
 

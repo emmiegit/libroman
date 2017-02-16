@@ -76,7 +76,7 @@ static void print_numeral(const char *str, int *ret)
 {
 	long num;
 
-	num = romantolong(str, strlen(str));
+	num = romantolong(str);
 	if (errno) {
 		puts("Invalid input.");
 		*ret = EXIT_FAILURE;
