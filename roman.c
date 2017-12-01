@@ -181,7 +181,7 @@ int longtoroman(long num, char *buf, size_t len)
 	size_t i, bytes;
 
 	/* Special cases */
-	if (len == 0) {
+	if (len < 2) {
 		errno = ENOBUFS;
 		return -1;
 	}
