@@ -32,11 +32,11 @@ static char buffer[256];
 
 #define UNUSED(x)			((void)(x))
 
-#define TEST(test_fn, input, expected)		\
-	do {					\
-		if (test_fn(input, expected)) {	\
-			exit_code = 1;		\
-		}				\
+#define TEST(test_fn, input, expected)			\
+	do {						\
+		if (!test_fn(input, expected)) {	\
+			exit_code = 1;			\
+		}					\
 	} while (0)
 
 #define TEST_R2L(input, expected)	TEST(test_r2l, input, expected)
@@ -47,24 +47,24 @@ static char buffer[256];
 static int test_r2l(const char *input, long expected)
 {
 	long actual;
-	int result;
+	int passed;
 
 	actual = romantolong(input);
-	result = actual == expected;
+	passed = actual == expected;
 
-	printf("* [%s] %s - %ld\n", RESULT_STRING(result), input, actual);
-	return result;
+	printf("* [%s] %s - %ld\n", RESULT_STRING(passed), input, actual);
+	return passed;
 }
 
 static int test_l2r(long input, const char *expected)
 {
-	int result;
+	int passed;
 
 	longtoroman(input, buffer, sizeof(buffer));
-	result = !strcmp(buffer, expected);
+	passed = !strcmp(buffer, expected);
 
-	printf("* [%s] %ld - %s\n", RESULT_STRING(result), input, buffer);
-	return result;
+	printf("* [%s] %ld - %s\n", RESULT_STRING(passed), input, buffer);
+	return passed;
 }
 
 int main(int argc, const char **argv)
