@@ -52,7 +52,7 @@ static int test_r2l(const char *input, long expected)
 	actual = romantolong(input);
 	passed = actual == expected;
 
-	printf("* [%s] %s - %ld\n", RESULT_STRING(passed), input, actual);
+	printf("* [%s] %s -> %ld\n", RESULT_STRING(passed), input, actual);
 	return passed;
 }
 
@@ -63,7 +63,7 @@ static int test_l2r(long input, const char *expected)
 	longtoroman(input, buffer, sizeof(buffer));
 	passed = !strcmp(buffer, expected);
 
-	printf("* [%s] %ld - %s\n", RESULT_STRING(passed), input, buffer);
+	printf("* [%s] %ld -> %s\n", RESULT_STRING(passed), input, buffer);
 	return passed;
 }
 
@@ -75,6 +75,7 @@ int main(int argc, const char **argv)
 	puts("Parsing tests:");
 	TEST_R2L("I", 1);
 
+	putchar('\n');
 	puts("Conversion tests:");
 	TEST_L2R(1, "I");
 
