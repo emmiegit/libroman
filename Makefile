@@ -44,6 +44,10 @@ ECHO_DEP_0 = @echo '[DEP] $@'; $(CC)
 ECHO_DEP_1 = $(CC)
 ECHO_DEP   = $(ECHO_DEP_$(V))
 
+ECHO_RUN_0 = @echo '[RUN] $<'; echo; $(shell realpath $<)
+ECHO_RUN_1 = $(shell realpath $<)
+ECHO_RUN   = $(ECHO_RUN_$(V))
+
 EXE_SRCS  := main.c
 EXE_OBJS  := $(EXE_SRCS:.c=.o)
 EXE_DEPS  := $(EXE_SRCS:.c=.d)
@@ -81,6 +85,7 @@ all: $(EXE) $(SHARED) $(STATIC)
 
 test: CFLAGS += -g
 test: $(TEST)
+	$(ECHO_RUN)
 
 debug: CFLAGS += -g
 debug: $(EXE) $(SHARED) $(STATIC)
