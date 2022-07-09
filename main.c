@@ -85,7 +85,7 @@ static void print_numeral(const char *str, int *ret)
 	}
 }
 
-int main(int argc, const char *argv[])
+int main(int argc, const char **argv)
 {
 	long num;
 	int i;
