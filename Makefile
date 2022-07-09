@@ -48,7 +48,11 @@ EXE_SRCS  := main.c
 EXE_OBJS  := $(EXE_SRCS:.c=.o)
 EXE_DEPS  := $(EXE_SRCS:.c=.d)
 
-SOURCES   := $(filter-out $(EXE_SRCS),$(wildcard *.c))
+TEST_SRCS := test.c
+TEST_OBJS := $(TEST_SRCS:.c=.o)
+TEST_DEPS := $(TEST_SRCS:.c=.d)
+
+SOURCES   := $(filter-out $(EXE_SRCS),$(filter-out $(TEST_SRCS),$(wildcard *.c)))
 OBJECTS   := $(SOURCES:.c=.o)
 DEPENDS   := $(SOURCES:.c=.d)
 
@@ -68,11 +72,15 @@ endif
 STATIC    := libroman.a
 SHARED    := libroman.$(SO_EXT)
 EXE       := roman
+TEST      := test_roman
 
-.PHONY: all debug clean
+.PHONY: all test debug clean
 
 all: CFLAGS += -O2
 all: $(EXE) $(SHARED) $(STATIC)
+
+test: CFLAGS += -g
+test: $(TEST)
 
 debug: CFLAGS += -g
 debug: $(EXE) $(SHARED) $(STATIC)
@@ -98,5 +106,8 @@ $(SHARED): $(PIC_OBJS)
 $(EXE): $(OBJECTS) $(EXE_OBJS)
 	$(ECHO_LD) $(FLAGS) $(LINKING) $(CFLAGS) -o $@ $^
 
--include $(DEPENDS) $(EXE_DEPS)
+$(TEST): $(OBJECTS) $(TEST_OBJS)
+	$(ECHO_LD) $(FLAGS) $(LINKING) $(CFLAGS) -o $@ $^
+
+-include $(DEPENDS) $(EXE_DEPS) $(TEST_DEPS)
 

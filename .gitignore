@@ -5,9 +5,9 @@
 *.so
 *.dylib
 roman
+test_roman
 
 # Misc
 .*.swp
 *~
 *#
-
