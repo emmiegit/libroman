@@ -63,7 +63,7 @@ static int test_l2r(long input, const char *expected)
 	longtoroman(input, buffer, sizeof(buffer));
 	passed = !strcmp(buffer, expected);
 
-	printf("* [%s] %4ld -> %8s\n", RESULT_STRING(passed), input, buffer);
+	printf("* [%s] %4ld -> %9s\n", RESULT_STRING(passed), input, buffer);
 	return passed;
 }
 
