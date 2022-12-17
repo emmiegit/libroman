@@ -261,4 +261,3 @@ int longtoroman(long num, char *buf, size_t len)
 	buf[bytes] = '\0';
 	return bytes;
 }
-

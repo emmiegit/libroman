@@ -32,4 +32,3 @@ long romantolong(const char *buf);
 int longtoroman(long num, char *buf, size_t len);
 
 #endif /* __ROMAN_H */
-
